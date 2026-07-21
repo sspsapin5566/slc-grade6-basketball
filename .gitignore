@@ -1,0 +1,6 @@
+.DS_Store
+*.mp4
+*.mp3
+.cache/
+transcribe_*.py
+parallel_transcribe.py
