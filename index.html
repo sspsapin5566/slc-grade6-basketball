@@ -12,26 +12,27 @@
     }
     body {
       margin: 0;
-      padding: 0;
+      padding: 16px 0;
       background-color: var(--bg-color);
       font-family: 'Microsoft JhengHei', -apple-system, sans-serif;
       color: var(--text-color);
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
       min-height: 100vh;
-      overflow: hidden;
+      box-sizing: border-box;
+      overflow-y: auto;
     }
     .top-bar {
       display: flex;
-      gap: 12px;
-      margin-bottom: 12px;
+      gap: 10px;
+      margin-bottom: 14px;
       flex-wrap: wrap;
       justify-content: center;
+      padding: 0 10px;
     }
     .top-btn {
-      background: rgba(255, 255, 255, 0.85);
+      background: rgba(255, 255, 255, 0.9);
       color: var(--title-color);
       text-decoration: none;
       font-size: 14px;
@@ -49,12 +50,11 @@
     }
     .slides-container {
       position: relative;
-      width: 90vw;
+      width: 92vw;
       max-width: 1200px;
-      height: 80vh;
-      min-height: 520px;
-      max-height: 720px;
-      background: rgba(255, 255, 255, 0.85);
+      height: min(72vh, 600px);
+      min-height: 440px;
+      background: rgba(255, 255, 255, 0.88);
       backdrop-filter: blur(10px);
       border-radius: 16px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
@@ -63,11 +63,42 @@
       flex-direction: column;
       overflow: hidden;
     }
+    .nav-arrow {
+      position: absolute;
+      top: 45%;
+      transform: translateY(-50%);
+      width: 44px;
+      height: 44px;
+      background: rgba(10, 40, 80, 0.12);
+      color: var(--title-color);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      z-index: 20;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+    .nav-arrow:hover {
+      background: var(--title-color);
+      color: #fff;
+      transform: translateY(-50%) scale(1.1);
+    }
+    .prev-arrow { left: 10px; }
+    .next-arrow { right: 10px; }
+    .nav-arrow.disabled {
+      opacity: 0.2;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
     .slide {
       display: none;
       flex: 1;
       min-height: 0;
-      padding: 30px 40px;
+      padding: 30px 60px;
       box-sizing: border-box;
       overflow-y: auto;
     }
@@ -258,6 +289,9 @@
   </div>
 
   <div class="slides-container">
+    <!-- Side Nav Arrows for Desktop/Laptop -->
+    <div class="nav-arrow prev-arrow" id="prev-arrow" onclick="changeSlide(-1)" title="上一頁 (←)">❮</div>
+    <div class="nav-arrow next-arrow" id="next-arrow" onclick="changeSlide(1)" title="下一頁 (→)">❯</div>
 
     <section class="slide" id="slide-1">
       <div class="slide-layout">
@@ -511,6 +545,8 @@
     const totalSlides = slides.length;
     const prevBtn = document.getElementById('prev-btn');
     const nextBtn = document.getElementById('next-btn');
+    const prevArrow = document.getElementById('prev-arrow');
+    const nextArrow = document.getElementById('next-arrow');
     const progressBar = document.getElementById('progress-bar');
     const slideCounter = document.getElementById('slide-counter');
 
@@ -521,9 +557,15 @@
       
       currentSlideIndex = index;
       
-      // Update buttons
-      prevBtn.disabled = index === 0;
-      nextBtn.disabled = index === totalSlides - 1;
+      // Update buttons and arrows
+      const isFirst = index === 0;
+      const isLast = index === totalSlides - 1;
+      
+      prevBtn.disabled = isFirst;
+      nextBtn.disabled = isLast;
+      
+      if (prevArrow) prevArrow.classList.toggle('disabled', isFirst);
+      if (nextArrow) nextArrow.classList.toggle('disabled', isLast);
       
       // Update progress bar
       const progressPercent = ((index + 1) / totalSlides) * 100;
